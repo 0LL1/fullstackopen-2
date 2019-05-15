@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
@@ -11,9 +11,7 @@ const App = () => {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => setPersons(response.data))
+    personService.getAll().then(initialPersons => setPersons(initialPersons))
   }, [])
 
   const handleNameInput = event => {
@@ -37,15 +35,46 @@ const App = () => {
     }
 
     if (persons.find(element => element.name === newName)) {
-      alert(`${newName} on jo luettelossa`)
+      const result = window.confirm(
+        `${newName} on jo luettelossa, korvataanko vanha numero uudella?`
+      )
+
+      result && replaceEntry(newEntry)
+
       setNewName('')
       setNewNumber('')
       return
     }
 
-    setPersons(persons.concat(newEntry))
-    setNewName('')
-    setNewNumber('')
+    personService.create(newEntry).then(returnedEntry => {
+      setPersons(persons.concat(returnedEntry))
+      setNewName('')
+      setNewNumber('')
+    })
+  }
+
+  const removeEntry = item => {
+    const result = window.confirm(`Poistetaanko ${item.name}?`)
+
+    if (result) {
+      personService.remove(item.id)
+      const newPersons = persons.filter(person => person.id !== item.id)
+      setPersons(newPersons)
+    }
+  }
+
+  const replaceEntry = item => {
+    const oldEntry = persons.find(person => person.name === item.name)
+
+    const newEntry = { ...oldEntry, number: item.number }
+
+    personService.replace(newEntry).then(returnedEntry => {
+      setPersons(
+        persons.map(person =>
+          person.id !== returnedEntry.id ? person : returnedEntry
+        )
+      )
+    })
   }
 
   const filteredPersons = persons.filter(person =>
@@ -54,7 +83,8 @@ const App = () => {
 
   const personList = filteredPersons.map(person => (
     <li key={person.name}>
-      {person.name} {person.number}
+      {person.name} {person.number}{' '}
+      <button onClick={() => removeEntry(person)}>poista</button>
     </li>
   ))
 
