@@ -1,0 +1,27 @@
+body {
+  max-width: 30rem;
+  margin: 0 auto;
+  padding: 0.5rem;
+}
+
+.success {
+  position: absolute;
+  top: -0.5rem;
+  right: 0.5rem;
+  background-color: #2ecc40;
+  color: #ffffff;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.error {
+  position: absolute;
+  top: -0.5rem;
+  right: 0.5rem;
+  background-color: #ff4136;
+  color: #ffffff;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
