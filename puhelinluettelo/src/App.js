@@ -50,12 +50,17 @@ const App = () => {
       return
     }
 
-    personService.create(newEntry).then(returnedEntry => {
-      setPersons(persons.concat(returnedEntry))
-      setNewName('')
-      setNewNumber('')
-      setMessage(`${returnedEntry.name} lisätty`)
-    })
+    personService
+      .create(newEntry)
+      .then(returnedEntry => {
+        setPersons(persons.concat(returnedEntry))
+        setNewName('')
+        setNewNumber('')
+        setMessage(`${returnedEntry.name} lisätty`)
+      })
+      .catch(err => {
+        setError(err.response.data.error)
+      })
   }
 
   const removeEntry = item => {
