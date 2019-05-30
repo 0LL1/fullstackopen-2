@@ -84,8 +84,10 @@ const App = () => {
         )
         setMessage(`${item.name} muutettu`)
       })
-      // I guess this is all that is needed in 2.20*
-      .catch(setError(`${item.name} oli jo poistettu`))
+      .catch(err => {
+        setError(`${item.name} oli jo poistettu`)
+        console.log(err)
+      })
   }
 
   const filteredPersons = persons.filter(person =>
