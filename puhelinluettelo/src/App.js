@@ -30,20 +30,20 @@ const App = () => {
     setSearch(event.target.value)
   }
 
-  const addEntry = event => {
+  const addPerson = event => {
     event.preventDefault()
 
-    const newEntry = {
+    const newPerson = {
       name: newName,
       number: newNumber
     }
 
-    if (persons.find(element => element.name === newName)) {
+    if (persons.find(person => person.name === newName)) {
       const result = window.confirm(
         `${newName} on jo luettelossa, korvataanko vanha numero uudella?`
       )
 
-      result && replaceEntry(newEntry)
+      result && replacePerson(newPerson)
 
       setNewName('')
       setNewNumber('')
@@ -51,19 +51,19 @@ const App = () => {
     }
 
     personService
-      .create(newEntry)
-      .then(returnedEntry => {
-        setPersons(persons.concat(returnedEntry))
+      .create(newPerson)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
-        setMessage(`${returnedEntry.name} lisätty`)
+        setMessage(`${returnedPerson.name} lisätty`)
       })
       .catch(err => {
         setError(err.response.data.error)
       })
   }
 
-  const removeEntry = item => {
+  const removePerson = item => {
     const result = window.confirm(`Poistetaanko ${item.name}?`)
 
     if (result) {
@@ -74,13 +74,13 @@ const App = () => {
     }
   }
 
-  const replaceEntry = item => {
-    const oldEntry = persons.find(person => person.name === item.name)
+  const replacePerson = item => {
+    const oldPerson = persons.find(person => person.name === item.name)
 
-    const newEntry = { ...oldEntry, number: item.number }
+    const newPerson = { ...oldPerson, number: item.number }
 
     personService
-      .replace(newEntry)
+      .replace(newPerson)
       .then(returnedEntry => {
         setPersons(
           persons.map(person =>
@@ -102,7 +102,7 @@ const App = () => {
   const personList = filteredPersons.map(person => (
     <li key={person.name}>
       {person.name} {person.number}{' '}
-      <button onClick={() => removeEntry(person)}>poista</button>
+      <button onClick={() => removePerson(person)}>poista</button>
     </li>
   ))
 
@@ -112,7 +112,7 @@ const App = () => {
       <Filter search={search} handleSearchInput={handleSearchInput} />
       <h2>Lisää uusi</h2>
       <PersonForm
-        addEntry={addEntry}
+        addPerson={addPerson}
         newName={newName}
         handleNameInput={handleNameInput}
         newNumber={newNumber}
